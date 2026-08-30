@@ -1,0 +1,391 @@
+% ================================================================ ANEXOS
+\renewcommand{\thesection}{Anexo \Alph{section}}
+\renewcommand{\thesubsection}{\Alph{section}.\arabic{subsection}}
+\setcounter{section}{0}
+\setcounter{table}{0}\renewcommand{\thetable}{A\arabic{table}}
+\setcounter{figure}{0}\renewcommand{\thefigure}{A\arabic{figure}}
+
+\begin{center}
+{\Large\bfseries Anexos}\\[2pt]
+{\small (material complementario; máximo 20 páginas)}
+\end{center}
+
+% ------------------------------------------------------------------ A
+\section{Repositorio GitHub con los códigos fuente}
+\label{anexo:repo}
+
+Todo el análisis es reproducible desde el repositorio del grupo:
+
+\begin{center}
+\fbox{\parbox{.86\linewidth}{\centering\ttfamily
+https://github.com/$\langle$usuario$\rangle$/proyecto1-btm-demanda\\[2pt]
+\footnotesize (actualizar con el enlace definitivo al publicar; ver instrucciones abajo)}}
+\end{center}
+
+\subsection{Estructura}
+\begin{verbatim}
+proyecto1-btm-demanda/
+|- README.md                  <- documentacion y guia de reproduccion
+|- requirements.txt           <- numpy, pandas, statsmodels, matplotlib
+|- data/
+|  |- demanda_pib_anual.csv   <- demanda SIN (GWh) y PIB real, 2000-2025
+|  |- upme_proyeccion_jul2024.csv <- proyeccion oficial UPME (esc. medio)
+|  |- espana_anual.csv        <- demanda b.c., autoconsumo y PIB de Espana
+|  |- parametros_btm.csv      <- parametros con fuente (CREG, APPA, PNUMA...)
+|- src/
+|  |- config.py               <- rutas, paleta de figuras y supuestos
+|  |- analisis_econometrico.py<- ADF/KPSS, Johansen, Engle-Granger,
+|  |                             VECM, VAR, combinacion de pronosticos
+|  |- ajuste_btm.py           <- demanda bruta y escenarios BtM E0-E3
+|  |- validacion.py           <- V1 backtest, V2 experimento Espana,
+|  |                             V3 panel LSDV Colombia-Espana
+|  |- generar_figuras.py      <- figuras F1-F7 del informe
+|  |- descargar_datos.py      <- refresco opcional desde XM (pydataxm),
+|  |                             Banco Mundial y anexo Excel UPME 2026-2040
+|- output/                    <- tablas CSV y figuras (se regeneran)
+|- informe/                   <- fuentes LaTeX de este documento
+\end{verbatim}
+
+\subsection{Reproducción}
+\begin{verbatim}
+pip install -r requirements.txt
+cd src
+python analisis_econometrico.py   # econometria y proyeccion organica
+python ajuste_btm.py              # escenarios BtM y demanda neta
+python validacion.py              # V1 backtest, V2 Espana, V3 panel
+python generar_figuras.py         # figuras
+\end{verbatim}
+Los cuatro scripts corren en menos de un minuto y regeneran todas las tablas
+y figuras de este informe. Para publicar el repositorio desde la cuenta de un
+integrante: \texttt{git init \&\& git add .\ \&\& git commit}, crear el
+repositorio vacío en GitHub y \texttt{git push -u origin main}.
+
+% ------------------------------------------------------------------ B
+\section{Resultados econométricos completos}
+
+\subsection{Cointegración de Johansen (sensibilidad a muestra y determinística)}
+
+\begin{table}[htb]\centering\small
+\caption{Prueba de la traza de Johansen, $H_0\!: r=0$ vs.\ $r\le1$
+($k=1$ rezago en diferencias).}
+\begin{tabular}{llcccc}
+\toprule
+Determinística & Muestra & Traza $r{=}0$ & VC 90\,\% & VC 95\,\% & ¿Rechaza 95\,\%?\\
+\midrule
+Constante            & 2000-2025 & 3,87  & 13,43 & 15,49 & No\\
+Constante            & 2000-2019 & 4,64  & 13,43 & 15,49 & No\\
+Constante+tendencia  & 2000-2025 & 10,57 & 16,16 & 18,40 & No\\
+Constante+tendencia  & 2000-2019 & \textbf{19,88} & 16,16 & 18,40 & \textbf{Sí}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Complemento de Engle-Granger (2000-2025): regresión estática
+$\ln D_t = 1{,}030 + 0{,}742\,\ln Y_t$ ($R^2=0{,}985$); ADF sobre los
+residuos $=-2{,}55$ ($p\approx0{,}0105$): se rechaza no cointegración al
+5\,\%. La evidencia conjunta respalda una relación de largo plazo, cuya
+inferencia se debilita con el quiebre de 2020, el mismo mecanismo que el BtM
+reproducirá de forma permanente sobre la demanda medida.
+
+\subsection{Combinación de pronósticos}
+
+Ponderaciones por inverso del error cuadrático medio de pronósticos a un paso
+en evaluación pseudo-fuera-de-muestra 2015-2025 (reestimación recursiva):
+VEC 0,456; VAR(1) en diferencias 0,544. El procedimiento replica, a escala,
+el esquema oficial (Tabla~1 del informe). Proyección resultante del SIN
+orgánico y demanda bruta (con cuña incremental GCE+ME de la UPME):
+
+\begin{table}[htb]\centering\small
+\caption{Proyección propia 2026-2040 (GWh-año, escenario medio).}
+\begin{tabular}{lrrrrr}
+\toprule
+ & 2026 & 2030 & 2035 & 2038 & 2040\\
+\midrule
+SIN orgánico (modelo)        & 86.879 & 98.248 & 114.569 & 125.633 & 133.595\\
+Cuña incremental GCE+ME      & 1.829  & 3.661  & 7.820   & 11.520  & 13.987\\
+\textbf{Demanda bruta}       & \textbf{88.708} & \textbf{101.909} & \textbf{122.389} & \textbf{137.153} & \textbf{147.582}\\
+Referencia UPME jul-2024 (SIN+GCE+ME+GD) & 89.253 & 97.682 & 111.295 & 121.569 & n.d.\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La senda propia crece más rápido que la referencia oficial (TCAC 3,8\,\% vs.\
+2,99\,\% de la rev.\ jul-2026) por dos razones: la elasticidad estimada en la
+muestra completa (0,75) recoge el ciclo expansivo 2021-2025, y la cuña GCE se
+toma del reporte oficial sin depurar probabilidades de materialización. Para
+efectos del análisis BtM lo relevante es el \emph{diferencial} bruta-neta,
+que es robusto al nivel de la línea base.
+
+\subsection{Marco de validación: resultados completos}
+
+\begin{table}[htb]\centering\small
+\caption{V1. Backtest retrospectivo en Colombia: pronóstico condicional al
+PIB observado, por corte de entrenamiento y modelo.}
+\begin{tabular}{clcc}
+\toprule
+Entrenamiento & Modelo & MAPE (\%) & RMSE (GWh)\\
+\midrule
+\multirow{3}{*}{2000-2019 (pron.\ 2020-2025)}
+ & Combinado VEC+VAR & 2,15 & 2.043\\
+ & Caminata aleatoria c/deriva & 2,02 & 1.835\\
+ & AR(1) univariado & 2,47 & 2.097\\
+\midrule
+\multirow{3}{*}{2000-2021 (pron.\ 2022-2025)}
+ & Combinado VEC+VAR & \textbf{1,15} & \textbf{1.235}\\
+ & Caminata aleatoria c/deriva & 1,79 & 1.552\\
+ & AR(1) univariado & 2,36 & 1.983\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]\centering\small
+\caption{V2. España: validación del estimador de reconstrucción del
+Paso~1. Horas equivalentes calibradas únicamente con 2025
+($h=1.174$~h-año); generación estimada
+$\widehat{G}_t=\bar{P}_t\cdot h$ vs.\ real (APPA).}
+\begin{tabular}{lrrr}
+\toprule
+Año & $\widehat{G}$ estimada (GWh) & $G$ real (GWh) & Error (\%)\\
+\midrule
+2019 & 554   & 925    & $-40{,}1$\\
+2020 & 1.095 & 1.656  & $-33{,}9$\\
+2021 & 2.100 & 3.007  & $-30{,}2$\\
+2022 & 4.442 & 4.564  & $-2{,}7$\\
+2023 & 7.261 & 7.262  & $0{,}0$\\
+2024 & 9.120 & 9.243  & $-1{,}3$\\
+2025 & 10.550 & 10.550 & (calibración)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]\centering\small
+\caption{V3. Panel Colombia-España en tasas de crecimiento (LSDV,
+ec.~4 del informe), errores estándar robustos HC1.}
+\begin{tabular}{lc}
+\toprule
+Parámetro & Valor\\
+\midrule
+$\hat{c}$ (coeficiente de $\Delta s$ BtM) & $-3{,}079$\\
+Error estándar robusto & 1,960\\
+IC 95\,\% & $[-6{,}92;\ 0{,}76]$\\
+$t$ de $H_0\!:c=-1$ ($p$-valor) & $-1{,}06$ (0,299)\\
+Elasticidad PIB de corto plazo, Colombia & 0,226\\
+Elasticidad PIB de corto plazo, España (demanda neta) & $-0{,}236$\\
+$R^2$ / observaciones & 0,58 / 30\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Notas metodológicas de V3: en niveles, $s_t$ y $\ln Y_t$ resultan casi
+colineales en la corta muestra española (2020-2025) y el coeficiente $c$ no
+queda identificado (el ejercicio en niveles arroja signos inestables); por
+ello la especificación se planteó en primeras diferencias, donde la variación
+de instalación anual $\Delta s$ se separa del ciclo del PIB. La elasticidad
+española de corto plazo negativa sobre demanda \emph{neta} es en sí misma
+sintomática del enmascaramiento que el término $\Delta s$ corrige. La serie
+de participación colombiana usa el registro de capacidad AGPE/GD (235,66~MW
+acumulados a 2023 y 339~MW a 2024, según UPME; 645~MW a 2025, rev.\
+ene-2026), con generación a factor de planta de 16,5\,\%.
+
+% ------------------------------------------------------------------ C
+\section{Escenarios BtM año a año}
+
+\begin{table}[htb]\centering\small
+\caption{Capacidad BtM instalada por escenario (MW).}
+\begin{tabular}{lrrrr}
+\toprule
+Año & E0 UPME & E1 CREG 4\,\% & E2 España & E3 PNUMA\\
+\midrule
+2026 & 896   & 1.669 & 842   & 824\\
+2028 & 1.727 & 1.787 & 1.365 & 1.342\\
+2030 & 3.331 & 1.918 & 2.119 & 2.188\\
+2032 & 3.884 & 2.061 & 3.107 & 3.567\\
+2034 & 4.529 & 2.217 & 4.276 & 5.815\\
+2035 & 4.891 & 2.303 & 4.903 & 7.424\\
+2036 & 5.282 & 2.392 & 5.539 & 7.424\\
+2038 & 6.159 & 2.581 & 6.794 & 7.424\\
+2040 & 7.182 & 2.777 & 7.964 & 7.424\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]\centering\small
+\caption{Demanda neta por escenario (GWh-año) y energía enmascarada en 2040.}
+\begin{tabular}{lrrrrr}
+\toprule
+Trayectoria & 2030 & 2035 & 2040 & TCAC 25-40 & Enmascarado 2040\\
+\midrule
+Demanda bruta (sin BtM) & 101.909 & 122.389 & 147.582 & 3,81\,\% & 0\\
+Neta E0 (tendencial UPME) & 97.094 & 115.320 & 137.201 & 3,31\,\% & 10.381\\
+Neta E1 (envolvente CREG) & 99.137 & 119.060 & 143.568 & 3,62\,\% & 4.014\\
+Neta E2 (trayectoria España) & 98.846 & 115.302 & 136.071 & 3,25\,\% & 11.511\\
+Neta E3 (potencial PNUMA) & 98.746 & 111.658 & 136.851 & 3,29\,\% & 10.731\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Supuestos: factor de planta FV 16,5\,\% (1~MW $\to$ 1,445~GWh-año;
+sensibilidad 15-18\,\% desplaza los cruces del umbral $\pm1$ año);
+participación del mercado regulado 68\,\% de la demanda comercial; en E1 se
+computa toda la generación BtM contra el umbral (interpretación del cálculo
+CREG de 1,2~GW $\leftrightarrow$ 4\,\%); la contabilización alternativa con
+excedentes del 40\,\% se reporta en la Tabla~3 del informe.
+
+\begin{figure}[htb]\centering
+\includegraphics[width=.8\linewidth]{f3_capacidad_btm.pdf}
+\caption{Capacidad BtM por escenario y referencia de España (9,59~GW a 2025).
+Elaboración propia.}
+\end{figure}
+
+% ------------------------------------------------------------------ D
+\section{Figuras complementarias}
+
+\begin{figure}[htb]\centering
+\includegraphics[width=.78\linewidth]{f1_demanda_pib.pdf}
+\caption{Demanda del SIN y PIB real de Colombia, índice 2000=100. La demanda
+crece por debajo del PIB (elasticidad $<1$) y el choque de 2020 rompe
+transitoriamente la relación. Fuentes: XM, DANE/Banco Mundial.}
+\end{figure}
+
+\begin{figure}[htb]\centering
+\includegraphics[width=.78\linewidth]{f6_cointegracion.pdf}
+\caption{Relación de cointegración estática $\ln D$-$\ln Y$ (2000-2025).}
+\end{figure}
+
+\begin{figure}[htb]\centering
+\includegraphics[width=.8\linewidth]{f5_curva_carga.pdf}
+\caption{Curva de carga diaria ilustrativa a 2035 bajo E2 (forma típica de
+día hábil del SIN, punta nocturna normalizada a la potencia máxima proyectada).
+El BtM fotovoltaico deprime el mediodía (${\sim}3{,}7$~GW) sin tocar la punta
+de las 19-20~h: el fenómeno de la ``curva de pato''. Elaboración propia.}
+\end{figure}
+
+\begin{figure}[htb]\centering
+\includegraphics[width=.8\linewidth]{f4_espana_btm.pdf}
+\caption{España: potencia BtM acumulada por segmento, 2018-2025 (APPA).
+De 302~MW a 9.590~MW en ocho años; el segmento comercial/industrial domina.}
+\end{figure}
+
+% ------------------------------------------------------------------ E
+\section{Material complementario: regulación y caso España}
+
+\subsection{Marco regulatorio colombiano del BtM}
+
+\begin{itemize}
+\item \textbf{Ley 1715 de 2014} (mod.\ Ley 2099 de 2021): promueve FNCER,
+autogeneración y entrega de excedentes.
+\item \textbf{Res.\ CREG 030 de 2018 $\to$ 174 de 2021}: reglas de AGPE
+($\le1$~MW... hasta 5~MW para autogeneración a pequeña escala según ajustes
+posteriores) y GD ($<1$~MW en SDL); créditos de energía: excedentes tipo~1
+(hasta el consumo) valorados a costo de compra del comercializador, tipo~2 a
+precio de bolsa.
+\item \textbf{Ley 2294 de 2023 (art.\ 235) y Decreto 2236 de 2023}: crean las
+\emph{comunidades energéticas} (AGRC y GDC).
+\item \textbf{Doc.\ CREG 901~099 de 2024}: soporte técnico; simula que con
+1,2~GW de autogeneración con créditos (equivalente al 4\,\% de la energía del
+mercado regulado) el costo unitario de nivel de tensión~1 sube
+${\sim}3{,}5$\,\% si todos los excedentes son tipo~1.
+\item \textbf{Res.\ CREG 101~072 de 2025 (art.\ 12)}: versión definitiva;
+umbral de revisión del 4\,\% de la demanda comercial regulada por mercado de
+comercialización; remuneración de excedentes referenciada a MC (precio medio
+de contratos del mercado regulado) para estabilizar la señal de precio.
+\item \textbf{Contexto de expansión}: el Plan 6GW+ y el balance gremial 2026
+(${\sim}4.000$~MW renovables proyectados, de los cuales ${\sim}1.300$~MW en
+recursos distribuidos) aceleran la base instalada BtM.
+\end{itemize}
+
+\subsection{Indicadores del caso español (APPA 2025 y REE)}
+
+\begin{table}[htb]\centering\small
+\caption{España: indicadores BtM 2025.}
+\begin{tabular}{lr}
+\toprule
+Potencia BtM acumulada & 9.590~MW\\
+Nueva potencia 2025 (residencial / C\&I) & 1.214~MW (368 / 846)\\
+Generación BtM aprovechada 2025 & 10.550~GWh\\
+Generación no aprovechada (vertidos limitados) & 2.183~GWh\\
+Cobertura de la demanda nacional (256.085~GWh) & 4,1\,\%\\
+Punta anual del sistema (15-ene-2025, 20:57) & 40.070~MW\\
+Almacenamiento BtM instalado en 2025 & 339~MWh ($+119$\,\%)\\
+``Demanda + autoconsumo'' publicada por REE (2025) & 269.753~GWh ($+3{,}7$\,\%)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Series anuales empleadas en la validación (APPA, figuras 8, 10 y 11 del
+informe): producción de autoconsumo aprovechada 2018-2025 de 446, 925,
+1.656, 3.007, 4.564, 7.262, 9.243 y 10.550~GWh; demanda nacional b.c.\
+2020-2025 de 250.051, 256.546, 250.471, 246.665, 249.000 y 256.085~GWh; y
+energía no aprovechada 2018-2025 de 120, 249, 431, 749, 1.384, 1.899, 2.094
+y 2.183~GWh.
+
+Lecciones para Colombia: (i)~la adopción es no lineal y dominada por el
+segmento comercial-industrial; (ii)~la cobertura energética del 4\,\% se
+alcanzó en ${\sim}7$ años desde el despegue regulatorio (RD 244/2019);
+(iii)~la punta del sistema no se redujo, pues el valor de capacidad del BtM
+fotovoltaico es bajo sin almacenamiento; (iv)~el evento de ``cero
+energético'' de abril de 2025 disparó el almacenamiento detrás del contador
+(+119\,\%), añadiendo un servicio de resiliencia que la regulación colombiana
+aún no valora; y (v)~la falta de un registro oficial completo de
+instalaciones es la principal debilidad estadística señalada por el sector;
+Colombia puede evitarla fortaleciendo desde ya los reportes de la
+Res.~CREG 174 de 2021 y el registro AGPE de la UPME, insumo directo del
+Paso~1 de la metodología propuesta.
+
+\subsection{Sobre los datos}
+
+Demanda SIN 2017-2025 verificada contra XM (2024: 82.084,9~GWh; 2025
+estimado con el crecimiento oficial de 2,62\,\%); 2000-2016 compilada de los
+informes anuales de XM y regenerable con \texttt{descargar\_datos.py}
+(API pydataxm). PIB real de Colombia y España en moneda constante de 2015
+del Banco Mundial (serie NY.GDP.MKTP.KN, consistente con DANE e INE). La
+proyección oficial UPME jul-2024 se transcribió del documento del curso; de
+la rev.\ jul-2026 se tomaron las tasas de crecimiento y las anclas de GD
+(3.331~MW a 2030 y 7.182~MW a 2040) publicadas por la UPME. Las series
+españolas de la validación provienen del informe APPA 2025 del material del
+curso y de REE (nota de prensa del sistema eléctrico 2025, que introduce la
+serie oficial ``demanda + autoconsumo'': 269.753~GWh).
+
+% ------------------------------------------------------------------ F
+\section{Código fuente principal (extracto)}
+
+Extracto de \texttt{src/ajuste\_btm.py} con la construcción de los
+escenarios; el repositorio contiene el código completo comentado.
+
+\begingroup\footnotesize
+\begin{verbatim}
+GWH_POR_MW = 8760 * FACTOR_PLANTA_FV / 1000.0   # ~1,45 GWh-anio por MW
+
+def esc_tendencial_upme():
+    """E0: anclas UPME rev. jul-2026 (645 MW en 2025, rev. ene-2026)."""
+    return interp_geometrica({2025: 645, 2030: 3331, 2040: 7182}).loc[H]
+
+def esc_creg_4pct(bruta):
+    """E1: capacidad cuya generacion anual equivale al 4 % de la
+    demanda comercial regulada (interpretacion conservadora art. 12)."""
+    mr = PART_REGULADO * bruta["demanda_bruta_gwh"]
+    return (UMBRAL_CREG * mr / GWH_POR_MW)
+
+def esc_espana(bruta):
+    """E2: la participacion BtM sobre demanda replica la senda
+    espanola: 4,1 % al septimo anio del despegue; logistica s_max=9 %."""
+    s_max, s_2025, s_2032 = 0.09, 0.011, 0.041
+    def inv(s): return np.log(s_max / s - 1.0)
+    k  = (inv(s_2025) - inv(s_2032)) / (2032 - 2025)
+    t0 = 2025 + inv(s_2025) / k
+    s  = s_max / (1.0 + np.exp(-k * (np.array(H) - t0)))
+    return pd.Series(s * bruta["demanda_bruta_gwh"].values / GWH_POR_MW,
+                     index=H)
+
+def esc_pnuma():
+    """E3: potencial de mercado PNUMA (7.424 MWp) alcanzado en 2035."""
+    return interp_geometrica({2025: 645, 2035: 7424, 2040: 7424}).loc[H]
+
+# demanda neta y umbral CREG
+for e in ["E0_upme", "E1_creg4", "E2_espana", "E3_pnuma"]:
+    gen = esc[f"{e}_mw"] * GWH_POR_MW
+    res[f"{e}_neta_gwh"] = bruta["demanda_bruta_gwh"] - gen
+    res[f"{e}_pct_umbral_total"] = 100 * gen / mr             # 100 % entregado
+    res[f"{e}_pct_umbral_fe"] = 100 * 0.40 * gen / mr         # excedentes 40 %
+\end{verbatim}
+\endgroup

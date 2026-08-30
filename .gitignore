@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+informe/*.aux
+informe/*.log
+informe/*.out
+informe/*.fls
+informe/*.fdb_latexmk
+informe/*.toc
+.DS_Store

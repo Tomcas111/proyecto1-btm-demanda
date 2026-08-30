@@ -1,0 +1,7 @@
+corte_entrenamiento,horizonte,modelo,MAPE_pct,RMSE_gwh
+2019,2020-2025,Combinado VEC+VAR,2.15,2043
+2019,2020-2025,Caminata aleatoria c/deriva,2.02,1835
+2019,2020-2025,AR(1) univariado,2.47,2097
+2021,2022-2025,Combinado VEC+VAR,1.15,1235
+2021,2022-2025,Caminata aleatoria c/deriva,1.79,1552
+2021,2022-2025,AR(1) univariado,2.36,1983

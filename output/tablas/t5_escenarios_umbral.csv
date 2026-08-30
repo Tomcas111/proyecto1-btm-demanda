@@ -1,0 +1,5 @@
+escenario,MW_2026,pctMR_2026,MW_2030,pctMR_2030,MW_2035,pctMR_2035,MW_2040,pctMR_2040,cruce_umbral_4pct,cruce_umbral_fe40
+E0 Tendencial UPME,896,2.15,3331,6.95,4891,8.49,7182,10.34,2029,2040
+E1 Envolvente CREG 4%,1669,4.0,1918,4.0,2303,4.0,2777,4.0,no cruza,no cruza
+E2 Trayectoria España,842,2.02,2119,4.42,4903,8.52,7964,11.47,2030,2038
+E3 Potencial PNUMA,824,1.97,2188,4.56,7424,12.89,7424,10.69,2030,2034

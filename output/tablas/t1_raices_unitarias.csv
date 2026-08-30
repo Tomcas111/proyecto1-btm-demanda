@@ -1,0 +1,5 @@
+serie,ADF_estadistico,ADF_pvalor,KPSS_estadistico,KPSS_pvalor
+ln(DEE),-2.369,0.151,0.76,0.01
+ln(PIB),-1.131,0.703,0.745,0.01
+Δln(DEE),-5.707,0.0,0.152,0.1
+Δln(PIB),-5.16,0.0,0.239,0.1

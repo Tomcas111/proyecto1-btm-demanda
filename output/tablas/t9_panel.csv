@@ -1,0 +1,10 @@
+parametro,valor
+c (coef. de Delta s BtM),-3.079
+e.e. robusto (HC1),1.96
+IC 95 %,[-6.92; 0.76]
+t de H0: c=-1,-1.06
+p-valor H0: c=-1,0.299
+elasticidad PIB Colombia (corto plazo),0.226
+elasticidad PIB Espana (corto plazo),-0.236
+R2,0.58
+n (obs.),30

@@ -1,0 +1,23 @@
+parametro,valor,unidad,fuente
+gd_capacidad_2024,339,MW,UPME Proyeccion demanda rev jul-2024 (Grafica 9)
+gd_capacidad_2025,645,MW,UPME Proyeccion demanda rev ene-2026 (escenario tendencial)
+gd_capacidad_2030_upme,3331,MW,UPME Proyeccion demanda 2026-2040 rev jul-2026
+gd_capacidad_2040_upme,7182,MW,UPME Proyeccion demanda 2026-2040 rev jul-2026
+pnuma_potencial_mwp,7424,MWp,PNUMA 2021 citado en UPME rev jul-2024
+pnuma_potencial_gwh,10100,GWh-anio,PNUMA 2021 citado en UPME rev jul-2024
+creg_umbral_energia,4.0,pct demanda comercial regulada,Res. CREG 101 072 de 2025 art.12 / Doc. CREG 901 099 de 2024
+creg_capacidad_equivalente_4pct,1200,MW,Doc. CREG 901 099 de 2024 (Figura 10)
+creg_impacto_cu_en_umbral,3.5,pct aumento CU N1,Doc. CREG 901 099 de 2024 (Figura 10)
+participacion_mercado_regulado,0.68,fraccion demanda comercial,UPME rev jul-2024 (Tabla 5: MR 54.065 GWh de 79.526 GWh en 2023)
+factor_planta_fv_colombia,0.165,fraccion,"Rendimiento tipico FV Colombia ~1.450 kWh/kWp-anio (UPME/IDEAM), sensibilidad 0.15-0.18"
+factor_utilizacion_gd_upme,0.32,fraccion potencia,UPME rev jul-2024 (relacion potencia demandada/instalada)
+espana_btm_acumulado_2025,9590,MW,APPA Informe Autoconsumo 2025
+espana_btm_generacion_2025,10550,GWh,APPA Informe Autoconsumo 2025
+espana_cobertura_demanda,4.1,pct demanda nacional (256.085 GWh),APPA Informe Autoconsumo 2025
+espana_demanda_punta_2025,40070,MW,REE - maximos anuales (15-ene-2025 20:57)
+espana_btm_nuevo_2025,1214,MW,APPA Informe Autoconsumo 2025
+colombia_techos_solares_may2026,24447,instalaciones,UPME noticia 13-may-2026
+colombia_techos_nuevos_2025,9360,instalaciones,UPME noticia 13-may-2026
+pib_crecimiento_2026,2.9,pct,UPME-Fedesarrollo (rev ene-2026)
+pib_crecimiento_lp,3.0,pct 2027-2040,UPME rev ene-2026 / MFMP
+demanda_2025_gwh,84235,GWh,XM (82.085 GWh en 2024 x 1,0262)
