@@ -63,12 +63,4 @@ oficial de la UPME rev. jul-2026); requiere conexión a internet.
 | Punta España | REE (máximo 2025: 40.070 MW, 15-ene 20:57) |
 
 ## Publicar en GitHub
-
-```bash
-git init && git add . && git commit -m "Proyecto 1 ILE4100: efecto BtM en proyección de demanda"
-git branch -M main
-git remote add origin https://github.com/<usuario>/proyecto1-btm-demanda.git
-git push -u origin main
-```
-
 El enlace del repositorio se referencia en el Anexo A del informe.
