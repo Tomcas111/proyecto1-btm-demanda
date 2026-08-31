@@ -9,6 +9,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage{float}
 \usepackage{caption}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,urlcolor=blue!55!black]{hyperref}
 \usepackage{titlesec}
@@ -183,10 +184,10 @@ UPME publica además un escenario de GD acelerada (potencial PNUMA) cuyo
 efecto es reducir el crecimiento medio de la demanda objetivo de 2,99\,\% a
 1,93\,\% anual \cite{upme2026}: la práctica oficial ya reconoce al BtM como
 la mayor fuente de incertidumbre a la baja. En la literatura nacional,
-\cite{vargas2025} compararon ARIMA, LSTM y Prophet para el pronóstico horario
-de corto plazo (MAPE ${\approx}4$\,\%) y \cite{grimaldo2021} documentaron la
-relación anual demanda-PIB; el reto abierto no es el corto plazo sino el
-largo plazo bajo cambio estructural.
+\cite{grimaldo2021} documentó la relación anual demanda-PIB; el reto
+abierto, examinado en la Sección~2.2 a partir de \cite{vargas2025}, no es el
+pronóstico de corto plazo sino la estimación de largo plazo bajo cambio
+estructural.
 
 \begin{table}[htb]\centering\small
 \caption{Evolución de las ponderaciones del modelo combinado de la UPME.}
@@ -202,6 +203,37 @@ Enero 2026 \cite{upmeene2026} & 22\,\% & 56\,\% & 22\,\%\\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Pronóstico horario vs.\ estimación de largo plazo: análisis de
+Vargas-Forero et al.\ (2025)}
+
+En la literatura nacional, \cite{vargas2025} compararon ARIMA, LSTM y
+Facebook Prophet para pronosticar las 24 horas siguientes de demanda en el
+mercado de corto plazo colombiano (MEM, datos XM); Prophet y ARIMA fueron
+los mejores modelos (MAPE de 4,1\,\%) y LSTM quedó algo por debajo (4,9\,\%).
+Los autores reportan que la precisión se deteriora en días no laborables,
+con un MAPE que sube de 3,0-4,6\,\% en días hábiles a 5,4-6,1\,\% en
+festivos y fines de semana, y que los tres modelos subestiman la demanda en
+las horas de mayor consumo, un punto que señalan como trabajo futuro.
+
+Ese resultado confirma la solidez de los modelos de series de tiempo e IA
+para el pronóstico horario, pero responde una pregunta distinta a la de este
+informe. La planeación de sistemas de potencia opera en energía anual (GWh)
+y potencia máxima (MW) a 15-20 años, un horizonte en el que los quiebres
+estructurales (autogeneración, cambio tecnológico, migración del consumo)
+dominan sobre la estacionalidad horaria, y un modelo sin variables
+macroeconómicas explicativas como el PIB o la demografía no tiene forma de
+anticiparlos; por eso la práctica de la UPME descrita en la Sección~2.1 sí
+las incorpora.
+
+La conexión con el BtM es directa: la generación solar detrás del contador
+introduce una no linealidad intradía creciente, la ya conocida ``curva de
+pato'', que distorsionaría precisamente las horas que un modelo horario
+entrena si se alimenta con demanda medida sin la reconstrucción de la
+demanda bruta que propone este trabajo (Paso~1, Sección~3). Aplicar
+cualquiera de los dos enfoques, horario o de largo plazo, sobre la serie sin
+corregir sumaría el enmascaramiento BtM al sesgo de subestimación en horas
+pico que \cite{vargas2025} ya documenta.
 
 \subsection{Fundamentos econométricos}
 
@@ -430,7 +462,18 @@ UPME lo cruza en 2029 y las sendas E2-E3 en 2030; contabilizando solo
 excedentes del 40\,\%, los cruces se desplazan a 2034-2040. En potencia
 máxima, el BtM fotovoltaico sin almacenamiento no reduce la punta nocturna
 del SIN (${\sim}$19-20~h): bajo E2, la carga neta del mediodía de 2035 cae
-${\sim}3{,}7$~GW con punta intacta (Anexo~D).
+${\sim}3{,}7$~GW con punta intacta (Anexo~D). El efecto sobre la energía
+anual (3-8\,\% según escenario) no es proporcional al de potencia: el factor
+de carga del SIN, $FC=D_{GWh}/(8760\cdot P_{max,MW})$, se deteriora porque
+el denominador casi no cambia mientras el numerador sí, obligando a
+remunerar la misma capacidad firme de generación y transporte sobre un
+menor volumen de energía neta. El umbral del 4\,\% además se evalúa por
+mercado de comercialización, no sobre el SIN agregado \cite{creg101072}; en
+mercados de mayor irradiación y costo unitario, como los de la Costa Caribe
+(Afinia, Air-e), es plausible que se alcance un par de años antes que el
+promedio nacional aquí estimado, hacia 2027-2028, aunque una estimación
+rigurosa exigiría desagregar el análisis por mercado, lo que queda como
+trabajo futuro (Sección~6).
 
 \begin{figure}[htb]\centering
 \includegraphics[width=.84\linewidth]{f2_proyeccion_escenarios.pdf}
@@ -507,7 +550,22 @@ ni los autoconsumos instantáneos ni el problema de potencia. La punta
 nocturna no se reduce, como lo confirma España con 9.590~MW BtM y punta
 anual intacta \cite{ree2026}; el almacenamiento BtM, que allí creció 119\,\%
 tras el apagón de abril de 2025 \cite{appa2025}, es el complemento que sí
-desplaza punta. Como limitaciones: las muestras anuales son cortas (el IC
+desplaza punta.
+
+La proyección de demanda no es un ejercicio aislado, alimenta directamente
+el dimensionamiento de la expansión de transmisión. El Plan de Expansión de
+Referencia Generación-Transmisión \cite{plangt2016} refuerza el STN y los
+STR para cumplir el criterio de confiabilidad N-1 precisamente en las horas
+de mayor exigencia del sistema, que en Colombia siguen siendo las nocturnas.
+Si la UPME dimensiona o posterga esas obras a partir de una demanda neta ya
+enmascarada por el BtM, arriesga subestimar la capacidad de transporte que
+la red seguirá necesitando en la punta, pues, como se mostró arriba, el BtM
+solar no la alivia. A esto se suma un desafío técnico distinto al de
+energía: los flujos bidireccionales al mediodía en nodos con alta
+concentración solar, como los de la Costa Caribe y el Valle del Cauca,
+exigen capacidad de transformación AT/MT dimensionada para exportar y no
+solo para importar, un problema de potencia que la proyección agregada de
+energía anual no captura. Como limitaciones: las muestras anuales son cortas (el IC
 del panel es amplio y la cointegración es sensible a la determinística), el
 estimador de reconstrucción pierde precisión en fases tempranas de adopción
 (errores de 30-40\,\% en España 2019-2021) y el factor de planta se trató
@@ -547,14 +605,17 @@ revisión tarifaria que se activará temprano (2029-2034 según escenario y
 contabilización), y evolucionar hacia una senda explícita de integración, con remuneración
 eficiente de excedentes, cargos de red por capacidad y señales horarias,
 antes de que el umbral se vuelva vinculante. Y la
-planeación de potencia debe modelar el BtM como cambio de forma de la curva
-de carga, valorando el almacenamiento detrás del contador como el
-complemento que sí desplaza punta. Como trabajo futuro se recomienda
-extender el panel a los mercados de comercialización colombianos cuando el
-registro AGPE acumule historia suficiente, incorporar el precio minorista al
-sistema VEC y modelar horariamente el hueco solar con los perfiles de XM;
-las limitaciones de muestra y de calibración señaladas en la discusión
-acotan la precisión, no la dirección, de los hallazgos.
+planeación de potencia, incluida la expansión de transmisión del Plan GT
+\cite{plangt2016}, debe dimensionarse sobre la demanda bruta y no sobre la
+neta enmascarada, modelar el BtM como cambio de forma de la curva de carga y
+valorar el almacenamiento detrás del contador como el complemento que sí
+desplaza punta. Como trabajo futuro se recomienda desagregar el análisis por
+mercado de comercialización, comenzando por los de mayor irradiación y costo
+unitario como los de la Costa Caribe, cuando el registro AGPE acumule
+historia suficiente; incorporar el precio minorista al sistema VEC; y
+modelar horariamente el hueco solar con los perfiles de XM. Las limitaciones
+de muestra y de calibración señaladas en la discusión acotan la precisión,
+no la dirección, de los hallazgos.
 
 % ========================================================== REFERENCIAS
 \begingroup

@@ -62,7 +62,7 @@ y figuras de este informe.
 
 \subsection{Cointegración de Johansen (sensibilidad a muestra y determinística)}
 
-\begin{table}[htb]\centering\small
+\begin{table}[H]\centering\small
 \caption{Prueba de la traza de Johansen, $H_0\!: r=0$ vs.\ $r\le1$
 ($k=1$ rezago en diferencias).}
 \begin{tabular}{llcccc}
@@ -92,7 +92,7 @@ VEC 0,456; VAR(1) en diferencias 0,544. El procedimiento replica, a escala,
 el esquema oficial (Tabla~1 del informe). Proyección resultante del SIN
 orgánico y demanda bruta (con cuña incremental GCE+ME de la UPME):
 
-\begin{table}[htb]\centering\small
+\begin{table}[H]\centering\small
 \caption{Proyección propia 2026-2040 (GWh-año, escenario medio).}
 \begin{tabular}{lrrrrr}
 \toprule
@@ -115,7 +115,7 @@ que es robusto al nivel de la línea base.
 
 \subsection{Marco de validación: resultados completos}
 
-\begin{table}[htb]\centering\small
+\begin{table}[H]\centering\small
 \caption{V1. Backtest retrospectivo en Colombia: pronóstico condicional al
 PIB observado, por corte de entrenamiento y modelo.}
 \begin{tabular}{clcc}
@@ -135,7 +135,7 @@ Entrenamiento & Modelo & MAPE (\%) & RMSE (GWh)\\
 \end{tabular}
 \end{table}
 
-\begin{table}[htb]\centering\small
+\begin{table}[H]\centering\small
 \caption{V2. España: validación del estimador de reconstrucción del
 Paso~1. Horas equivalentes calibradas únicamente con 2025
 ($h=1.174$~h-año); generación estimada
@@ -155,7 +155,7 @@ Año & $\widehat{G}$ estimada (GWh) & $G$ real (GWh) & Error (\%)\\
 \end{tabular}
 \end{table}
 
-\begin{table}[htb]\centering\small
+\begin{table}[H]\centering\small
 \caption{V3. Panel Colombia-España en tasas de crecimiento (LSDV,
 ec.~4 del informe), errores estándar robustos HC1.}
 \begin{tabular}{lc}
@@ -187,7 +187,7 @@ ene-2026), con generación a factor de planta de 16,5\,\%.
 % ------------------------------------------------------------------ C
 \section{Escenarios BtM año a año}
 
-\begin{table}[htb]\centering\small
+\begin{table}[H]\centering\small
 \caption{Capacidad BtM instalada por escenario (MW).}
 \begin{tabular}{lrrrr}
 \toprule
@@ -206,7 +206,7 @@ Año & E0 UPME & E1 CREG 4\,\% & E2 España & E3 PNUMA\\
 \end{tabular}
 \end{table}
 
-\begin{table}[htb]\centering\small
+\begin{table}[H]\centering\small
 \caption{Demanda neta por escenario (GWh-año) y energía enmascarada en 2040.}
 \begin{tabular}{lrrrrr}
 \toprule
@@ -228,7 +228,7 @@ computa toda la generación BtM contra el umbral (interpretación del cálculo
 CREG de 1,2~GW $\leftrightarrow$ 4\,\%); la contabilización alternativa con
 excedentes del 40\,\% se reporta en la Tabla~3 del informe.
 
-\begin{figure}[htb]\centering
+\begin{figure}[H]\centering
 \includegraphics[width=.8\linewidth]{f3_capacidad_btm.pdf}
 \caption{Capacidad BtM por escenario y referencia de España (9,59~GW a 2025).
 Elaboración propia.}
@@ -237,19 +237,19 @@ Elaboración propia.}
 % ------------------------------------------------------------------ D
 \section{Figuras complementarias}
 
-\begin{figure}[htb]\centering
+\begin{figure}[H]\centering
 \includegraphics[width=.78\linewidth]{f1_demanda_pib.pdf}
 \caption{Demanda del SIN y PIB real de Colombia, índice 2000=100. La demanda
 crece por debajo del PIB (elasticidad $<1$) y el choque de 2020 rompe
 transitoriamente la relación. Fuentes: XM, DANE/Banco Mundial.}
 \end{figure}
 
-\begin{figure}[htb]\centering
+\begin{figure}[H]\centering
 \includegraphics[width=.78\linewidth]{f6_cointegracion.pdf}
 \caption{Relación de cointegración estática $\ln D$-$\ln Y$ (2000-2025).}
 \end{figure}
 
-\begin{figure}[htb]\centering
+\begin{figure}[H]\centering
 \includegraphics[width=.8\linewidth]{f5_curva_carga.pdf}
 \caption{Curva de carga diaria ilustrativa a 2035 bajo E2 (forma típica de
 día hábil del SIN, punta nocturna normalizada a la potencia máxima proyectada).
@@ -257,7 +257,7 @@ El BtM fotovoltaico deprime el mediodía (${\sim}3{,}7$~GW) sin tocar la punta
 de las 19-20~h: el fenómeno de la ``curva de pato''. Elaboración propia.}
 \end{figure}
 
-\begin{figure}[htb]\centering
+\begin{figure}[H]\centering
 \includegraphics[width=.8\linewidth]{f4_espana_btm.pdf}
 \caption{España: potencia BtM acumulada por segmento, 2018-2025 (APPA).
 De 302~MW a 9.590~MW en ocho años; el segmento comercial/industrial domina.}
@@ -293,7 +293,7 @@ recursos distribuidos) aceleran la base instalada BtM.
 
 \subsection{Indicadores del caso español (APPA 2025 y REE)}
 
-\begin{table}[htb]\centering\small
+\begin{table}[H]\centering\small
 \caption{España: indicadores BtM 2025.}
 \begin{tabular}{lr}
 \toprule
@@ -344,6 +344,7 @@ curso y de REE (nota de prensa del sistema eléctrico 2025, que introduce la
 serie oficial ``demanda + autoconsumo'': 269.753~GWh).
 
 % ------------------------------------------------------------------ F
+\clearpage
 \section{Código fuente principal (extracto)}
 
 Extracto de \texttt{src/ajuste\_btm.py} con la construcción de los
